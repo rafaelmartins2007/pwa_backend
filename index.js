@@ -10,6 +10,7 @@ const hostname = "0.0.0.0";
 const port = Number(process.env.PORT || 3000);
 let router = require('./router');
 var app = express();
+app.set('trust proxy', 1);
 
 const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173'].filter(Boolean);
 const corsOptions = { origin: allowedOrigins, credentials: true };

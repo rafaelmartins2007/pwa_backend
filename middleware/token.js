@@ -1,7 +1,6 @@
 const Users = require('../data/users');
 
 module.exports = (req, res, next) => {
-  console.log(req.cookies)
   let token = req.cookies.token;
 
   if (!token) {
