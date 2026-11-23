@@ -3,12 +3,16 @@ const http = require("http");
 const mongoose = require("mongoose");
 const path = require("path")
 const socketIo = require("socket.io");
+const cors = require('cors');
 require('dotenv').config();
 const config = require('./config');
 const hostname = "0.0.0.0";
 const port = Number(process.env.PORT || 3000);
 let router = require('./router');
 var app = express();
+
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173'].filter(Boolean);
+const corsOptions = { origin: allowedOrigins, credentials: true };
 
 mongoose
   .connect(config.db)
@@ -17,9 +21,7 @@ mongoose
 
 const server = http.createServer(app);
 const io = socketIo(server, {
-  cors: {
-    origin: "http://*:*", //allow all IPs and All ports
-  },
+  cors: corsOptions,
 });
 
 io.on("connection", (socket) => {
@@ -31,6 +33,9 @@ io.on("connection", (socket) => {
   });
 });
 
+app.use(cors(corsOptions));
+app.get('/health', (req, res) => res.json({ ok: true }));
+app.use(router.init(io));
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 app.use(router.init(io));
